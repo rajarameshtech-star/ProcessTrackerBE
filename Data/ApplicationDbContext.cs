@@ -62,9 +62,9 @@ namespace ProcessTracker.Data
         {
             // Applications
             modelBuilder.Entity<Application>().HasData(
-                new Application { Id = 1, Title = "Change Request", Description = "Process for managing change requests", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
-                new Application { Id = 2, Title = "Incident Management", Description = "Process for reporting and tracking incidents", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
-                new Application { Id = 3, Title = "Unit Testing", Description = "Process for unit testing documentation", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow }
+                new Application { Id = 1, Title = "HR Management System", Description = "Human Resources portal and management", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
+                new Application { Id = 2, Title = "Customer Relationship Management", Description = "CRM application for sales and tracking", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
+                new Application { Id = 3, Title = "Financial Accounting Portal", Description = "Internal accounting and billing portal", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow }
             );
 
             // ProcessDefinitions
@@ -107,6 +107,21 @@ namespace ProcessTracker.Data
                 new ProcessField { Id = 21, ProcessDefinitionId = 3, FieldName = "CodeCoverage", Label = "Code Coverage %", FieldType = FieldType.Number, IsRequired = true, SortOrder = 6, Min = 0, Max = 100, IsActive = true, CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
                 new ProcessField { Id = 22, ProcessDefinitionId = 3, FieldName = "TestStatus", Label = "Overall Status", FieldType = FieldType.Dropdown, IsRequired = true, SortOrder = 7, OptionsJson = "[{\"label\":\"Passed\",\"value\":\"PASSED\"},{\"label\":\"Failed\",\"value\":\"FAILED\"},{\"label\":\"In Progress\",\"value\":\"IN_PROGRESS\"},{\"label\":\"Not Started\",\"value\":\"NOT_STARTED\"}]", IsActive = true, CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
                 new ProcessField { Id = 23, ProcessDefinitionId = 3, FieldName = "Notes", Label = "Test Notes", FieldType = FieldType.TextArea, IsRequired = false, SortOrder = 8, IsActive = true, CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow }
+            );
+
+            // ProcessRecords
+            modelBuilder.Entity<ProcessRecord>().HasData(
+                new ProcessRecord { Id = 1L, ApplicationId = 1, ProcessDefinitionId = 1, RecordStatus = "Submitted", RecordNumber = "CR-2024-001", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, SubmittedDate = DateTime.UtcNow }
+            );
+
+            // ProcessRecordFieldValues
+            modelBuilder.Entity<ProcessRecordFieldValue>().HasData(
+                new ProcessRecordFieldValue { Id = 1L, ProcessRecordId = 1L, ProcessFieldId = 1, FieldValue = "Upgrade HR Portal Database", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
+                new ProcessRecordFieldValue { Id = 2L, ProcessRecordId = 1L, ProcessFieldId = 2, FieldValue = "Database needs to be migrated to the latest version for better performance.", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
+                new ProcessRecordFieldValue { Id = 3L, ProcessRecordId = 1L, ProcessFieldId = 3, FieldValue = "HIGH", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
+                new ProcessRecordFieldValue { Id = 4L, ProcessRecordId = 1L, ProcessFieldId = 4, FieldValue = "STANDARD", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
+                new ProcessRecordFieldValue { Id = 5L, ProcessRecordId = 1L, ProcessFieldId = 6, FieldValue = "2024-12-01", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
+                new ProcessRecordFieldValue { Id = 6L, ProcessRecordId = 1L, ProcessFieldId = 8, FieldValue = "CR-2024-001", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow }
             );
         }
     }

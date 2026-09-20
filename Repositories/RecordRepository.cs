@@ -40,9 +40,12 @@ namespace ProcessTracker.Repositories
                 .ToListAsync();
         }
 
-        public async Task<int> GetTotalRecordsCountAsync(int processDefinitionId, string? status = null)
+        public async Task<int> GetTotalRecordsCountAsync(int processDefinitionId, int? applicationId = null, string? status = null)
         {
             var query = _context.ProcessRecords.Where(pr => pr.ProcessDefinitionId == processDefinitionId);
+
+            if (applicationId.HasValue)
+                query = query.Where(pr => pr.ApplicationId == applicationId.Value);
 
             if (!string.IsNullOrEmpty(status))
                 query = query.Where(pr => pr.RecordStatus == status);
@@ -53,7 +56,7 @@ namespace ProcessTracker.Repositories
 
         // Repositories/RecordRepository.cs - GetRecordsByProcessDefinitionWithFiltersAsync (CORRECTED)
         // Repositories/RecordRepository.cs - GetRecordsByProcessDefinitionWithFiltersAsync (COMPLETE)
-        public async Task<List<ProcessRecord>> GetRecordsByProcessDefinitionWithFiltersAsync(int processDefinitionId, Dictionary<string, object> filters, int pageNumber, int pageSize)
+        public async Task<List<ProcessRecord>> GetRecordsByProcessDefinitionWithFiltersAsync(int processDefinitionId, int? applicationId, Dictionary<string, object> filters, int pageNumber, int pageSize)
         {
             int skip = (pageNumber - 1) * pageSize;
 
@@ -61,6 +64,9 @@ namespace ProcessTracker.Repositories
                 .Include(pr => pr.FieldValues)
                 .ThenInclude(fv => fv.ProcessField)
                 .Where(pr => pr.ProcessDefinitionId == processDefinitionId);
+
+            if (applicationId.HasValue)
+                query = query.Where(pr => pr.ApplicationId == applicationId.Value);
 
             // Get all process fields for type checking
             var processFields = await _context.ProcessFields
@@ -109,22 +115,35 @@ namespace ProcessTracker.Repositories
             foreach (var parsedFilter in parsedFilters)
             {
                 var processField = processFields.FirstOrDefault(pf => pf.FieldName == parsedFilter.Key);
-                var (fieldType, value) = parsedFilter.Value;
+                if (processField == null) continue;
+                
+                var (fieldType, rawValue) = parsedFilter.Value;
+
+                string stringValue = "";
+                if (rawValue is System.Text.Json.JsonElement je && je.ValueKind == System.Text.Json.JsonValueKind.String)
+                {
+                    stringValue = je.GetString() ?? "";
+                }
+                else
+                {
+                    stringValue = rawValue?.ToString() ?? "";
+                }
+
+                int fieldId = processField.Id; // Local scalar variable for robust EF translation
 
                 if (fieldType == FieldType.Text || fieldType == FieldType.TextArea ||
                     fieldType == FieldType.Email || fieldType == FieldType.Url || fieldType == FieldType.Phone)
                 {
-                    var searchValue = value?.ToString() ?? "";
                     query = query.Where(pr => pr.FieldValues
-                        .Any(fv => fv.ProcessFieldId == processField.Id &&
-                             fv.FieldValue.Contains(searchValue)));
+                        .Any(fv => fv.ProcessFieldId == fieldId &&
+                                   fv.FieldValue != null &&
+                                   fv.FieldValue.Contains(stringValue)));
                 }
                 else if (fieldType == FieldType.Dropdown || fieldType == FieldType.Checkbox)
                 {
-                    var exactValue = value?.ToString() ?? "";
                     query = query.Where(pr => pr.FieldValues
-                        .Any(fv => fv.ProcessFieldId == processField.Id &&
-                             fv.FieldValue == exactValue));
+                        .Any(fv => fv.ProcessFieldId == fieldId &&
+                                   fv.FieldValue == stringValue));
                 }
             }
 

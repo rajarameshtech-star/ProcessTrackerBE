@@ -18,12 +18,20 @@ namespace ProcessTracker.Controllers
             _recordService = recordService;
         }
 
+        /// <summary>
+        /// Create a new Record for a specific Process Definition
+        /// </summary>
+        /// <param name="processDefinitionId">Process Definition ID</param>
+        /// <param name="request">Record data</param>
+        /// <returns>Created Record</returns>
         [HttpPost]
-        public async Task<ActionResult<RecordResponse>> CreateRecord(int processDefinitionId, [FromBody] CreateRecordRequest request)
+        [ProducesResponseType(typeof(RecordResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<RecordResponse>> CreateRecord([FromRoute] int processDefinitionId, [FromBody] CreateRecordRequest request)
         {
             try
             {
-                var applicationId = 1; // TODO: Get from context/user
+                var applicationId = request.ApplicationId;
                 var response = await _recordService.CreateRecordAsync(processDefinitionId, applicationId, request);
                 return CreatedAtAction(nameof(GetRecord), new { processDefinitionId, recordId = response.Id }, response);
             }
@@ -33,8 +41,16 @@ namespace ProcessTracker.Controllers
             }
         }
 
+        /// <summary>
+        /// Get a specific Record by its ID
+        /// </summary>
+        /// <param name="processDefinitionId">Process Definition ID</param>
+        /// <param name="recordId">Record ID</param>
+        /// <returns>Record data</returns>
         [HttpGet("{recordId}")]
-        public async Task<ActionResult<RecordResponse>> GetRecord(int processDefinitionId, long recordId)
+        [ProducesResponseType(typeof(RecordResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<RecordResponse>> GetRecord([FromRoute] int processDefinitionId, [FromRoute] long recordId)
         {
             try
             {
@@ -47,15 +63,35 @@ namespace ProcessTracker.Controllers
             }
         }
 
+        /// <summary>
+        /// Get all records for a process, paginated
+        /// </summary>
+        /// <param name="processDefinitionId">Process Definition ID</param>
+        /// <param name="pageNumber">Page number</param>
+        /// <param name="pageSize">Page size</param>
+        /// <param name="status">Optional status filter</param>
+        /// <returns>Paginated records</returns>
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<RecordResponse>>> GetRecords(int processDefinitionId, [FromQuery] int pageNumber = 0, [FromQuery] int pageSize = 20, [FromQuery] string? status = null)
+        [ProducesResponseType(typeof(PaginatedResponse<RecordResponse>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResponse<RecordResponse>>> GetRecords([FromRoute] int processDefinitionId, [FromQuery] int pageNumber = 0, [FromQuery] int pageSize = 20, [FromQuery] string? status = null)
         {
             var response = await _recordService.GetRecordsByProcessAsync(processDefinitionId, pageNumber, pageSize, status);
             return Ok(response);
         }
 
+        /// <summary>
+        /// Update an existing record
+        /// </summary>
+        /// <param name="processDefinitionId">Process Definition ID</param>
+        /// <param name="recordId">Record ID</param>
+        /// <param name="request">Update data</param>
+        /// <returns>Updated record</returns>
         [HttpPut("{recordId}")]
-        public async Task<ActionResult<RecordResponse>> UpdateRecord(int processDefinitionId, long recordId, [FromBody] UpdateRecordRequest request)
+        [ProducesResponseType(typeof(RecordResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status409Conflict)]
+        public async Task<ActionResult<RecordResponse>> UpdateRecord([FromRoute] int processDefinitionId, [FromRoute] long recordId, [FromBody] UpdateRecordRequest request)
         {
             try
             {
@@ -76,8 +112,16 @@ namespace ProcessTracker.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a specific record
+        /// </summary>
+        /// <param name="processDefinitionId">Process Definition ID</param>
+        /// <param name="recordId">Record ID</param>
         [HttpDelete("{recordId}")]
-        public async Task<ActionResult> DeleteRecord(int processDefinitionId, long recordId)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status409Conflict)]
+        public async Task<ActionResult> DeleteRecord([FromRoute] int processDefinitionId, [FromRoute] long recordId)
         {
             try
             {
@@ -94,8 +138,19 @@ namespace ProcessTracker.Controllers
             }
         }
 
+        /// <summary>
+        /// Change record status to Submitted
+        /// </summary>
+        /// <param name="processDefinitionId">Process Definition ID</param>
+        /// <param name="recordId">Record ID</param>
+        /// <param name="request">Submission payload</param>
+        /// <returns>Submitted Record</returns>
         [HttpPost("{recordId}/submit")]
-        public async Task<ActionResult<RecordResponse>> SubmitRecord(int processDefinitionId, long recordId, [FromBody] SubmitRecordRequest request)
+        [ProducesResponseType(typeof(RecordResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status409Conflict)]
+        public async Task<ActionResult<RecordResponse>> SubmitRecord([FromRoute] int processDefinitionId, [FromRoute] long recordId, [FromBody] SubmitRecordRequest request)
         {
             try
             {
@@ -117,9 +172,19 @@ namespace ProcessTracker.Controllers
         }
 
         // Controllers/RecordsController.cs - ADD THIS METHOD
+        /// <summary>
+        /// Search records with complex filters
+        /// </summary>
+        /// <param name="processDefinitionId">Process Definition ID</param>
+        /// <param name="applicationId">Optional Application ID filter</param>
+        /// <param name="request">Filter criteria</param>
+        /// <returns>Filtered records</returns>
         [HttpPost("search")]
+        [ProducesResponseType(typeof(PaginatedResponse<RecordResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<PaginatedResponse<RecordResponse>>> SearchRecords(
-            int processDefinitionId,
+            [FromRoute] int processDefinitionId,
+            [FromQuery] int? applicationId,
             [FromBody] FilterRecordsRequest request)
         {
             if (request.PageNumber < 1)
@@ -130,6 +195,7 @@ namespace ProcessTracker.Controllers
 
             var response = await _recordService.GetRecordsByProcessWithFiltersAsync(
                 processDefinitionId,
+                applicationId,
                 request.Filters,
                 request.PageNumber,
                 request.PageSize);

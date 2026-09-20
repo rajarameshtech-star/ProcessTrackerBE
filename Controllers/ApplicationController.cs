@@ -18,7 +18,14 @@ namespace ProcessTracker.Controllers
             _applicationService = applicationService;
         }
 
+        /// <summary>
+        /// Create a new Application
+        /// </summary>
+        /// <param name="request">Application details</param>
+        /// <returns>Created application</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(ApplicationResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ApplicationResponse>> CreateApplication([FromBody] CreateApplicationRequest request)
         {
             try
@@ -32,7 +39,15 @@ namespace ProcessTracker.Controllers
             }
         }
 
+        /// <summary>
+        /// Get all Applications with pagination
+        /// </summary>
+        /// <param name="pageNumber">Page number</param>
+        /// <param name="pageSize">Page size</param>
+        /// <returns>Paginated response of applications</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(PaginatedResponse<ApplicationResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<PaginatedResponse<ApplicationResponse>>> GetAllApplications([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
         {
             try
@@ -46,8 +61,15 @@ namespace ProcessTracker.Controllers
             }
         }
 
+        /// <summary>
+        /// Get a specific Application by ID
+        /// </summary>
+        /// <param name="id">Application ID</param>
+        /// <returns>Application details</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApplicationResponse>> GetApplication(int id)
+        [ProducesResponseType(typeof(ApplicationResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ApplicationResponse>> GetApplication([FromRoute] int id)
         {
             try
             {
@@ -60,8 +82,17 @@ namespace ProcessTracker.Controllers
             }
         }
 
+        /// <summary>
+        /// Update an Application
+        /// </summary>
+        /// <param name="id">Application ID</param>
+        /// <param name="request">Update request details</param>
+        /// <returns>Updated Application</returns>
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApplicationResponse>> UpdateApplication(int id, [FromBody] UpdateApplicationRequest request)
+        [ProducesResponseType(typeof(ApplicationResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ApplicationResponse>> UpdateApplication([FromRoute] int id, [FromBody] UpdateApplicationRequest request)
         {
             try
             {
@@ -78,8 +109,15 @@ namespace ProcessTracker.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete an Application
+        /// </summary>
+        /// <param name="id">Application ID</param>
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteApplication(int id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status409Conflict)]
+        public async Task<ActionResult> DeleteApplication([FromRoute] int id)
         {
             try
             {
@@ -96,8 +134,15 @@ namespace ProcessTracker.Controllers
             }
         }
 
+        /// <summary>
+        /// Toggle the active status of an Application
+        /// </summary>
+        /// <param name="id">Application ID</param>
+        /// <returns>Updated application status</returns>
         [HttpPatch("{id}/toggle-status")]
-        public async Task<ActionResult<ApplicationResponse>> ToggleActiveStatus(int id)
+        [ProducesResponseType(typeof(ApplicationResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ApplicationResponse>> ToggleActiveStatus([FromRoute] int id)
         {
             try
             {

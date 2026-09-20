@@ -1,0 +1,12 @@
+C:\Users\rajar\Desktop\Frontend\Backend\ProcessTrackerBE\Services\ProcessFieldService.cs(29,47): error CS1503: Argument 1: cannot convert from 'System.Collections.Generic.List<string>' to 'System.Collections.Generic.Dictionary<string, string>' [C:\Users\rajar\Desktop\Frontend\Backend\ProcessTrackerBE\ProcessTracker.csproj]
+C:\Users\rajar\Desktop\Frontend\Backend\ProcessTrackerBE\Services\ProcessFieldService.cs(32,47): error CS1503: Argument 1: cannot convert from 'System.Collections.Generic.List<string>' to 'System.Collections.Generic.Dictionary<string, string>' [C:\Users\rajar\Desktop\Frontend\Backend\ProcessTrackerBE\ProcessTracker.csproj]
+C:\Users\rajar\Desktop\Frontend\Backend\ProcessTrackerBE\Services\ProcessFieldService.cs(40,47): error CS1503: Argument 1: cannot convert from 'System.Collections.Generic.List<string>' to 'System.Collections.Generic.Dictionary<string, string>' [C:\Users\rajar\Desktop\Frontend\Backend\ProcessTrackerBE\ProcessTracker.csproj]
+C:\Users\rajar\Desktop\Frontend\Backend\ProcessTrackerBE\Services\ProcessFieldService.cs(95,47): error CS1503: Argument 1: cannot convert from 'System.Collections.Generic.List<string>' to 'System.Collections.Generic.Dictionary<string, string>' [C:\Users\rajar\Desktop\Frontend\Backend\ProcessTrackerBE\ProcessTracker.csproj]
+
+Build FAILED.
+    23 Warning(s)
+    4 Error(s)
+
+Time Elapsed 00:00:01.30
+
+Workload updates are available. Run `dotnet workload list` for more information.

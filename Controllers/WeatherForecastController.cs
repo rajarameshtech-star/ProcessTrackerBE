@@ -18,7 +18,12 @@ namespace ProcessTracker.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get weather forecast
+        /// </summary>
+        /// <returns>Weather forecast</returns>
         [HttpGet(Name = "GetWeatherForecast")]
+        [ProducesResponseType(typeof(IEnumerable<WeatherForecast>), StatusCodes.Status200OK)]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast

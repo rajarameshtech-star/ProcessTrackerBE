@@ -14,6 +14,6 @@ namespace ProcessTracker.Interfaces.ServiceInterfaces
         Task<PaginatedResponse<RecordResponse>> GetRecordsByProcessAsync(int processDefinitionId, int skip, int take, string? status = null);
 
         // Interfaces/ServiceInterfaces/IRecordService.cs - ADD THIS METHOD
-        Task<PaginatedResponse<RecordResponse>> GetRecordsByProcessWithFiltersAsync(int processDefinitionId, Dictionary<string, object> filters, int pageNumber, int pageSize);
+        Task<PaginatedResponse<RecordResponse>> GetRecordsByProcessWithFiltersAsync(int processDefinitionId, int? applicationId, Dictionary<string, object> filters, int pageNumber, int pageSize);
     }
 }

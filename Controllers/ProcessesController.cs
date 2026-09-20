@@ -17,8 +17,15 @@ namespace ProcessTracker.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Get a Process by Process Definition ID, including fields
+        /// </summary>
+        /// <param name="processDefinitionId">The process definition ID</param>
+        /// <returns>Process Definition and its fields</returns>
         [HttpGet("{processDefinitionId}")]
-        public async Task<ActionResult<ProcessDefinitionWithFieldsResponse>> GetProcessDefinition(int processDefinitionId)
+        [ProducesResponseType(typeof(ProcessDefinitionWithFieldsResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ProcessDefinitionWithFieldsResponse>> GetProcessDefinition([FromRoute] int processDefinitionId)
         {
             var process = await _context.ProcessDefinitions
                 .Include(pd => pd.Fields)

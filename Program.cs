@@ -35,16 +35,20 @@ try
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-    // Repository Dependency Injection
+    // Register Repositories
+    builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
     builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
-    builder.Services.AddScoped<IRecordRepository, RecordRepository>();
     builder.Services.AddScoped<IProcessDefinitionRepository, ProcessDefinitionRepository>();
+    builder.Services.AddScoped<IRecordRepository, RecordRepository>();
+    builder.Services.AddScoped<IProcessFieldRepository, ProcessFieldRepository>();
 
-    // Service Dependency Injection
-    builder.Services.AddScoped<IValidationService, ValidationService>();
-    builder.Services.AddScoped<IRecordService, RecordService>();
+    // Register Services
     builder.Services.AddScoped<IApplicationService, ApplicationService>();
     builder.Services.AddScoped<IProcessDefinitionService, ProcessDefinitionService>();
+    builder.Services.AddScoped<IRecordService, RecordService>();
+    builder.Services.AddScoped<IProcessFieldService, ProcessFieldService>();
+    builder.Services.AddScoped<IMetricsService, MetricsService>();
+    builder.Services.AddScoped<IValidationService, ValidationService>();
 
     // CORS Configuration
     builder.Services.AddCors(options =>
@@ -73,7 +77,7 @@ try
     });
 
     // Add Exception Handling Middleware
-    app.UseMiddleware<ExceptionHandlingMiddleware>();
+    // app.UseMiddleware<ExceptionHandlingMiddleware>();
 
     // Add Logging Middleware
     app.UseMiddleware<LoggingMiddleware>();
@@ -99,6 +103,7 @@ try
 }
 catch (Exception ex)
 {
+    Console.WriteLine("CRASH ERROR: " + ex.ToString());
     Log.Fatal(ex, "ProcessTracker API terminated unexpectedly");
 }
 finally

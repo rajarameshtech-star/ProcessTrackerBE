@@ -186,7 +186,7 @@ namespace ProcessTracker.Services
         public async Task<PaginatedResponse<RecordResponse>> GetRecordsByProcessAsync(int processDefinitionId, int pageNumber, int pageSize, string? status = null)
         {
             var records = await _recordRepository.GetRecordsByProcessDefinitionAsync(processDefinitionId, pageNumber, pageSize, status);
-            var totalCount = await _recordRepository.GetTotalRecordsCountAsync(processDefinitionId, status);
+            var totalCount = await _recordRepository.GetTotalRecordsCountAsync(processDefinitionId, null, status);
 
             var responses = records.Select(r =>
             {
@@ -240,10 +240,10 @@ namespace ProcessTracker.Services
         }
 
         // Services/RecordService.cs - ADD THIS METHOD
-        public async Task<PaginatedResponse<RecordResponse>> GetRecordsByProcessWithFiltersAsync(int processDefinitionId, Dictionary<string, object> filters, int pageNumber, int pageSize)
+        public async Task<PaginatedResponse<RecordResponse>> GetRecordsByProcessWithFiltersAsync(int processDefinitionId, int? applicationId, Dictionary<string, object> filters, int pageNumber, int pageSize)
         {
-            var records = await _recordRepository.GetRecordsByProcessDefinitionWithFiltersAsync(processDefinitionId, filters, pageNumber, pageSize);
-            var totalCount = await _recordRepository.GetTotalRecordsCountAsync(processDefinitionId, null);
+            var records = await _recordRepository.GetRecordsByProcessDefinitionWithFiltersAsync(processDefinitionId, applicationId, filters, pageNumber, pageSize);
+            var totalCount = await _recordRepository.GetTotalRecordsCountAsync(processDefinitionId, applicationId, null);
 
             var responses = records.Select(r =>
             {

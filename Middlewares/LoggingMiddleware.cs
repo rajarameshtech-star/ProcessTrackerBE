@@ -26,7 +26,7 @@ namespace ProcessTracker.Middlewares
                 if (request.Method == "POST" || request.Method == "PUT")
                 {
                     request.EnableBuffering();
-                    using (var reader = new StreamReader(request.Body))
+                    using (var reader = new StreamReader(request.Body, System.Text.Encoding.UTF8, true, 1024, true))
                     {
                         requestBody = await reader.ReadToEndAsync();
                         request.Body.Position = 0;
