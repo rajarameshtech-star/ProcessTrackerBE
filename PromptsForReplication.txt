@@ -1,0 +1,109 @@
+Project Replication Prompts for Claude 3 Haiku (Detailed Version)
+
+# Goal
+To meticulously replicate the codebase changes executed in the session. These prompts are highly specific, providing exact code snippets and structural logic that small models like Haiku 3.1 need to ensure exact 1:1 replication.
+
+---
+
+### Phase 1: Fixing Backend Stream & Filter Bugs
+**Prompt 1:**
+"In my .NET 8 API project, my `Middlewares/LoggingMiddleware.cs` is inappropriately disposing of the incoming HTTP request stream, leading to 'Cannot access a disposed object' 500 errors in downstream Model Binders. Provide the complete `LoggingMiddleware.cs` code but change the `StreamReader` instantiation on the POST/PUT logic to:
+`using (var reader = new StreamReader(request.Body, System.Text.Encoding.UTF8, true, 1024, true))`
+We must pass `leaveOpen: true` (the final parameter) to prevent it from closing `request.Body`."
+
+**Prompt 2:**
+"In `Repositories/RecordRepository.cs`, my dynamic LINQ search is failing translation in Entity Framework Core because ASP.NET maps unknown dynamic POST dictionaries into `System.Text.Json.JsonElement`. 
+Provide the updated code for `GetRecordsByProcessDefinitionWithFiltersAsync`. For `FieldType.Text` and dropdown filters inside the loop, extract the `stringValue` EXACTLY like this:
+```csharp
+var (fieldType, rawValue) = parsedFilter.Value;
+string stringValue = "";
+if (rawValue is System.Text.Json.JsonElement je && je.ValueKind == System.Text.Json.JsonValueKind.String) {
+    stringValue = je.GetString() ?? "";
+} else {
+    stringValue = rawValue?.ToString() ?? "";
+}
+int fieldId = processField.Id; // local primitive for EF closure
+```
+Then use `fieldId` and `stringValue` in the `.Any(fv => fv.ProcessFieldId == fieldId && ...)` EF Core `IQueryable` statements."
+
+**Prompt 3:**
+"Currently `Requests/CreateRecordRequest.cs` only has `public Dictionary<string, string> FieldValues { get; set; } = new();`. Expand this object by adding `public int ApplicationId { get; set; }`. 
+Then, rewrite the method `Task<ActionResult<RecordResponse>> CreateRecord` inside `Controllers/RecordsController.cs`. Instead of using `var applicationId = 1; // TODO: Get from context/user`, pull it dynamically utilizing `var applicationId = request.ApplicationId;` and pass it into `_recordService.CreateRecordAsync`."
+
+**Prompt 4:**
+"We must add an optional `int? applicationId` to the `SearchRecords` POST endpoint in `Controllers/RecordsController.cs`. 
+1. Update route signature: `public async Task<ActionResult<PaginatedResponse<RecordResponse>>> SearchRecords([FromRoute] int processDefinitionId, [FromQuery] int? applicationId, [FromBody] FilterRecordsRequest request)`
+2. Update `IRecordService.cs` interface AND `RecordService.cs` method (`GetRecordsByProcessWithFiltersAsync`) to accept `int? applicationId`. Pass it down to the repository.
+3. Update `IRecordRepository.cs` and `RecordRepository.cs`. Change `Task<int> GetTotalRecordsCountAsync(int processDefinitionId, int? applicationId = null, string? status = null);`. 
+4. In `RecordRepository.cs`, before executing `CountAsync()` and `ToListAsync()`, append this EF condition safely: 
+`if (applicationId.HasValue) query = query.Where(pr => pr.ApplicationId == applicationId.Value);`"
+
+### Phase 2: ProcessFields Endpoints
+**Prompt 5:**
+"I need you to write `Requests/CreateProcessFieldRequest.cs` and `Requests/UpdateProcessFieldRequest.cs`. 
+They must both contain these standard validation mappings:
+string Label
+bool IsRequired
+int SortOrder
+string? Placeholder
+string? DefaultValue
+string? OptionsJson
+int? MinLength, int? MaxLength
+decimal? Min, decimal? Max
+string? Pattern
+bool IsActive
+NOTE: `CreateProcessFieldRequest` needs two additional required properties: `int ProcessDefinitionId` and `string FieldName`. `UpdateProcessFieldRequest` does NOT contain these two properties because they are immutable."
+
+**Prompt 6:**
+"Write `Interfaces/RepositoryInterfaces/IProcessFieldRepository.cs` and `Repositories/ProcessFieldRepository.cs`. 
+`IProcessFieldRepository` needs to inherit `IGenericRepository<ProcessField>`. 
+Implement these 3 methods natively inside `ProcessFieldRepository` using Entity Framework `ApplicationDbContext`:
+1. `Task<List<ProcessField>> GetFieldsByProcessDefinitionAsync(int processDefinitionId)` (use `.OrderBy(pf => pf.SortOrder)`)
+2. `Task<ProcessField?> GetFieldWithDefinitionAsync(int id)` (use `.Include(pf => pf.ProcessDefinition)`)
+3. `Task<bool> HasRecordsAssociatedAsync(int fieldId)` (check if `_context.ProcessRecordFieldValues.AnyAsync(fv => fv.ProcessFieldId == fieldId)` is true)."
+
+**Prompt 7:**
+"Write `Interfaces/ServiceInterfaces/IProcessFieldService.cs` and `Services/ProcessFieldService.cs`. 
+Dependencies: `IProcessFieldRepository` and `IProcessDefinitionRepository`.
+Required Methods:
+- `CreateProcessFieldAsync`: throw a `ValidationException` (using `new Dictionary<string, string> { { "FieldName", "Field Name is required" } }`) if `FieldName` clashes with `existingFields.Any(f => f.FieldName.Equals(...))` or if `Label` is empty/null.
+- `UpdateProcessFieldAsync`: map over the existing fetched fields properties, except `FieldName` and `ProcessDefinitionId`.
+- `GetProcessFieldAsync` and `GetFieldsByProcessDefinitionAsync`.
+- `DeleteProcessFieldAsync`: throw an `InvalidOperationException` if `HasRecordsAssociatedAsync` returns true.
+- `ToggleActiveStatusAsync`: swaps `IsActive = !IsActive`."
+
+**Prompt 8:**
+"Draft `Controllers/ProcessFieldsController.cs`. 
+Add `[ApiController]` and `[Route("api/process-fields")]`.
+Expose explicit endpoints mapping to the Service tasks:
+- `[HttpPost]` -> `CreateProcessField`
+- `[HttpGet("{id}")]` -> `GetProcessField`
+- `[HttpGet("process/{processDefinitionId}")]` -> `GetFieldsByProcessDefinition`
+- `[HttpPut("{id}")]` -> `UpdateProcessField`
+- `[HttpDelete("{id}")]` -> `DeleteProcessField`
+- `[HttpPatch("{id}/toggle-status")]` -> `ToggleActiveStatus`
+Use `try/catch` wrapping for `NotFoundException` (return 404), `ValidationException` (return 400), and `InvalidOperationException` (return 409). Inject `IProcessFieldService`."
+
+### Phase 3: Dashboard Metrics API
+**Prompt 9:**
+"Write `Responses/DashboardMetricsResponse.cs`. It must have:
+- `int TotalCompletedRecords`
+- `int TotalPendingRecords`
+- `List<ProcessMetricsResponse> ProcessMetrics` (init to `new()`)
+Write the nested `ProcessMetricsResponse` class with:
+- `int ProcessDefinitionId`
+- `string ProcessName`
+- `string ProcessCode`
+- `int CompletedCount`
+- `int PendingCount`"
+
+**Prompt 10:**
+"Write `Interfaces/ServiceInterfaces/IMetricsService.cs` with `Task<DashboardMetricsResponse> GetDashboardMetricsAsync(int? applicationId = null);`. 
+Then write `Services/MetricsService.cs`. Inside the implementation:
+Use Entity Framework's `.AsQueryable()` on `ProcessRecords`. Filter by `applicationId` if not null.
+Run two native `.CountAsync()` routines for `TotalCompletedRecords` ("Submitted") and `TotalPendingRecords` ("Draft").
+To get metric breakdowns, execute `.GroupBy(r => new { r.ProcessDefinitionId, r.RecordStatus })` against `recordsQuery`, run `.Select()` to pair `ProcessDefinitionId` and `Count()`, then query `.ToListAsync()`. Finally, manually build out the `ProcessMetricsResponse` array by iterating against your loaded `ProcessDefinitions` and aggregating the statuses. Ensure the context gets dynamically injected."
+
+**Prompt 11:**
+"Write `Controllers/MetricsController.cs` exposing a `[HttpGet("dashboard")]` method (`GetDashboardMetrics`). Extract `[FromQuery] int? applicationId` and pass it into the injected `IMetricsService`. 
+Once created, provide the `Program.cs` snippet required to register the newly created files into dependency injection using `builder.Services.AddScoped<IProcessFieldRepository, ProcessFieldRepository>();`, `builder.Services.AddScoped<IProcessFieldService, ProcessFieldService>();`, and `builder.Services.AddScoped<IMetricsService, MetricsService>();`."

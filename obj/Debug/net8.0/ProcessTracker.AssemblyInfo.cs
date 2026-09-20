@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ProcessTracker")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+11cbc97cec6514ee99a093e9c131cb1ab3860fdf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a8b3a9c9afddf482f849dc61169fe73dbad961f5")]
 [assembly: System.Reflection.AssemblyProductAttribute("ProcessTracker")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ProcessTracker")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

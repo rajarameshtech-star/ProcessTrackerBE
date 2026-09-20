@@ -54,6 +54,16 @@ namespace ProcessTracker.Data
                 .HasForeignKey(pfv => pfv.ProcessRecordId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // ProcessRecordFieldValue Indexes for Search Performance
+            modelBuilder.Entity<ProcessRecordFieldValue>()
+                .HasIndex(pfv => pfv.ProcessFieldId)
+                .HasDatabaseName("IX_ProcessRecordFieldValues_ProcessFieldId_Include_FieldValue")
+                .IncludeProperties(pfv => pfv.FieldValue);
+
+            modelBuilder.Entity<ProcessRecordFieldValue>()
+                .HasIndex(pfv => new { pfv.ProcessRecordId, pfv.ProcessFieldId })
+                .HasDatabaseName("IX_ProcessRecordFieldValues_Record_Field");
+
             // Seed data
             SeedData(modelBuilder);
         }
