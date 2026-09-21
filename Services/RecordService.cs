@@ -52,27 +52,12 @@ namespace ProcessTracker.Services
                 ProcessDefinitionId = processDefinitionId,
                 RecordStatus = "Draft",
                 RecordNumber = GenerateRecordNumber(),
+                FieldValuesJson = System.Text.Json.JsonSerializer.Serialize(request.FieldValues),
                 CreatedDate = DateTime.UtcNow,
                 ModifiedDate = DateTime.UtcNow
             };
 
             await _recordRepository.AddAsync(record);
-            await _recordRepository.SaveChangesAsync();
-
-            var fieldValues = new List<ProcessRecordFieldValue>();
-            foreach (var fieldValue in request.FieldValues)
-            {
-                fieldValues.Add(new ProcessRecordFieldValue
-                {
-                    ProcessRecordId = record.Id,
-                    ProcessFieldId = await GetProcessFieldIdAsync(processDefinitionId, fieldValue.Key),
-                    FieldValue = fieldValue.Value,
-                    CreatedDate = DateTime.UtcNow,
-                    ModifiedDate = DateTime.UtcNow
-                });
-            }
-
-            await _context.ProcessRecordFieldValues.AddRangeAsync(fieldValues);
             await _recordRepository.SaveChangesAsync();
 
             return MapToResponse(record, request.FieldValues);
@@ -85,7 +70,7 @@ namespace ProcessTracker.Services
             if (record == null)
                 throw new NotFoundException($"Record with ID {recordId} not found");
 
-            var fieldValues = record.FieldValues.ToDictionary(fv => fv.ProcessField.FieldName, fv => fv.FieldValue);
+            var fieldValues = ParseFieldValues(record.FieldValuesJson);
             return MapToResponse(record, fieldValues);
         }
 
@@ -108,37 +93,19 @@ namespace ProcessTracker.Services
 
             _recordRepository.Update(record);
 
-            var existingFieldValues = _context.ProcessRecordFieldValues
-                .Where(pfv => pfv.ProcessRecordId == recordId)
-                .ToList();
+            var existingFieldValues = ParseFieldValues(record.FieldValuesJson);
 
             foreach (var fieldValue in request.FieldValues)
             {
-                var processFieldId = await GetProcessFieldIdAsync(record.ProcessDefinitionId, fieldValue.Key);
-                var existing = existingFieldValues.FirstOrDefault(fv => fv.ProcessFieldId == processFieldId);
-
-                if (existing != null)
-                {
-                    existing.FieldValue = fieldValue.Value;
-                    existing.ModifiedDate = DateTime.UtcNow;
-                }
-                else
-                {
-                    await _context.ProcessRecordFieldValues.AddAsync(new ProcessRecordFieldValue
-                    {
-                        ProcessRecordId = recordId,
-                        ProcessFieldId = processFieldId,
-                        FieldValue = fieldValue.Value,
-                        CreatedDate = DateTime.UtcNow,
-                        ModifiedDate = DateTime.UtcNow
-                    });
-                }
+                existingFieldValues[fieldValue.Key] = fieldValue.Value;
             }
+
+            record.FieldValuesJson = System.Text.Json.JsonSerializer.Serialize(existingFieldValues);
 
             await _recordRepository.SaveChangesAsync();
 
             var updatedRecord = await _recordRepository.GetRecordWithFieldsAsync(recordId);
-            var fieldValuesDict = updatedRecord.FieldValues.ToDictionary(fv => fv.ProcessField.FieldName, fv => fv.FieldValue);
+            var fieldValuesDict = ParseFieldValues(updatedRecord.FieldValuesJson);
             return MapToResponse(updatedRecord, fieldValuesDict);
         }
 
@@ -164,7 +131,7 @@ namespace ProcessTracker.Services
             if (record.RecordStatus != "Draft")
                 throw new InvalidOperationException("Only Draft records can be submitted");
 
-            var fieldValues = record.FieldValues.ToDictionary(fv => fv.ProcessField.FieldName, fv => fv.FieldValue);
+            var fieldValues = ParseFieldValues(record.FieldValuesJson);
             var errors = await _validationService.ValidateRecordAsync(record.ProcessDefinitionId, fieldValues, isSubmit: true);
 
             if (errors.Count > 0)
@@ -190,7 +157,7 @@ namespace ProcessTracker.Services
 
             var responses = records.Select(r =>
             {
-                var fieldValues = r.FieldValues.ToDictionary(fv => fv.ProcessField.FieldName, fv => fv.FieldValue);
+                var fieldValues = ParseFieldValues(r.FieldValuesJson);
                 return MapToResponse(r, fieldValues);
             }).ToList();
 
@@ -234,6 +201,21 @@ namespace ProcessTracker.Services
             return field.Id;
         }
 
+        private Dictionary<string, string> ParseFieldValues(string? json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                return new Dictionary<string, string>();
+
+            try
+            {
+                return System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? new Dictionary<string, string>();
+            }
+            catch
+            {
+                return new Dictionary<string, string>();
+            }
+        }
+
         private string GenerateRecordNumber()
         {
             return $"REC-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}";
@@ -247,7 +229,7 @@ namespace ProcessTracker.Services
 
             var responses = records.Select(r =>
             {
-                var fieldValues = r.FieldValues.ToDictionary(fv => fv.ProcessField.FieldName, fv => fv.FieldValue);
+                var fieldValues = ParseFieldValues(r.FieldValuesJson);
                 return MapToResponse(r, fieldValues);
             }).ToList();
 

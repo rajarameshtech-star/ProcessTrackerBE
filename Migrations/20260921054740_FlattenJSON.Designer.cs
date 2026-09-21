@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProcessTracker.Data;
 
@@ -11,9 +12,11 @@ using ProcessTracker.Data;
 namespace ProcessTracker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260921054740_FlattenJSON")]
+    partial class FlattenJSON
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,28 +58,28 @@ namespace ProcessTracker.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5760),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9779),
                             Description = "Human Resources portal and management",
                             IsActive = true,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5763),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9781),
                             Title = "HR Management System"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5764),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9783),
                             Description = "CRM application for sales and tracking",
                             IsActive = true,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5765),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9784),
                             Title = "Customer Relationship Management"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5766),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9785),
                             Description = "Internal accounting and billing portal",
                             IsActive = true,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5767),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9786),
                             Title = "Financial Accounting Portal"
                         });
                 });
@@ -118,30 +121,30 @@ namespace ProcessTracker.Migrations
                         {
                             Id = 1,
                             Code = "CR",
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5887),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9920),
                             Description = "CR Process",
                             IsActive = true,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5888),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9920),
                             Name = "Change Request"
                         },
                         new
                         {
                             Id = 2,
                             Code = "INCIDENT",
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5890),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9922),
                             Description = "Incident Process",
                             IsActive = true,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5890),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9923),
                             Name = "Incident Management"
                         },
                         new
                         {
                             Id = 3,
                             Code = "UT",
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5892),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9925),
                             Description = "Unit Testing Process",
                             IsActive = true,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5892),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9925),
                             Name = "Unit Testing"
                         });
                 });
@@ -217,7 +220,7 @@ namespace ProcessTracker.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5911),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9945),
                             FieldName = "Title",
                             FieldType = 0,
                             IsActive = true,
@@ -225,7 +228,7 @@ namespace ProcessTracker.Migrations
                             Label = "Change Title",
                             MaxLength = 255,
                             MinLength = 5,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5912),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9946),
                             Placeholder = "Brief title",
                             ProcessDefinitionId = 1,
                             SortOrder = 1
@@ -233,27 +236,27 @@ namespace ProcessTracker.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5915),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9948),
                             FieldName = "Description",
                             FieldType = 5,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Detailed Description",
                             MinLength = 20,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5915),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9949),
                             ProcessDefinitionId = 1,
                             SortOrder = 2
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5917),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9951),
                             FieldName = "Priority",
                             FieldType = 4,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Priority Level",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5918),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9951),
                             OptionsJson = "[{\"label\":\"Critical\",\"value\":\"CRITICAL\"},{\"label\":\"High\",\"value\":\"HIGH\"},{\"label\":\"Medium\",\"value\":\"MEDIUM\"},{\"label\":\"Low\",\"value\":\"LOW\"}]",
                             ProcessDefinitionId = 1,
                             SortOrder = 3
@@ -261,13 +264,13 @@ namespace ProcessTracker.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5920),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9953),
                             FieldName = "ChangeType",
                             FieldType = 4,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Type of Change",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5920),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9953),
                             OptionsJson = "[{\"label\":\"Emergency\",\"value\":\"EMERGENCY\"},{\"label\":\"Urgent\",\"value\":\"URGENT\"},{\"label\":\"Standard\",\"value\":\"STANDARD\"},{\"label\":\"Minor\",\"value\":\"MINOR\"}]",
                             ProcessDefinitionId = 1,
                             SortOrder = 4
@@ -275,52 +278,52 @@ namespace ProcessTracker.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5922),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9955),
                             FieldName = "ImpactScope",
                             FieldType = 5,
                             IsActive = true,
                             IsRequired = false,
                             Label = "Impact Scope",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5922),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9955),
                             ProcessDefinitionId = 1,
                             SortOrder = 5
                         },
                         new
                         {
                             Id = 6,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5924),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9957),
                             FieldName = "ImplementationDate",
                             FieldType = 2,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Implementation Date",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5924),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9957),
                             ProcessDefinitionId = 1,
                             SortOrder = 6
                         },
                         new
                         {
                             Id = 7,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5926),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9959),
                             FieldName = "RollbackPlan",
                             FieldType = 5,
                             IsActive = true,
                             IsRequired = false,
                             Label = "Rollback Plan",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5926),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9959),
                             ProcessDefinitionId = 1,
                             SortOrder = 7
                         },
                         new
                         {
                             Id = 8,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5928),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9961),
                             FieldName = "CRNumber",
                             FieldType = 0,
                             IsActive = true,
                             IsRequired = true,
                             Label = "CR Number",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5929),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9961),
                             Placeholder = "e.g., CR-2024-001",
                             ProcessDefinitionId = 1,
                             SortOrder = 8
@@ -328,13 +331,13 @@ namespace ProcessTracker.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5971),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9978),
                             FieldName = "IncidentId",
                             FieldType = 0,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Incident ID",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5971),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9978),
                             Placeholder = "e.g., INC-2024-001",
                             ProcessDefinitionId = 2,
                             SortOrder = 1
@@ -342,7 +345,7 @@ namespace ProcessTracker.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5975),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9980),
                             FieldName = "Title",
                             FieldType = 0,
                             IsActive = true,
@@ -350,33 +353,33 @@ namespace ProcessTracker.Migrations
                             Label = "Incident Title",
                             MaxLength = 255,
                             MinLength = 5,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5975),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9981),
                             ProcessDefinitionId = 2,
                             SortOrder = 2
                         },
                         new
                         {
                             Id = 11,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5977),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9983),
                             FieldName = "Description",
                             FieldType = 5,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Incident Description",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5977),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9983),
                             ProcessDefinitionId = 2,
                             SortOrder = 3
                         },
                         new
                         {
                             Id = 12,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5979),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9985),
                             FieldName = "Severity",
                             FieldType = 4,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Severity Level",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5979),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9985),
                             OptionsJson = "[{\"label\":\"Blocker\",\"value\":\"BLOCKER\"},{\"label\":\"Critical\",\"value\":\"CRITICAL\"},{\"label\":\"Major\",\"value\":\"MAJOR\"},{\"label\":\"Minor\",\"value\":\"MINOR\"}]",
                             ProcessDefinitionId = 2,
                             SortOrder = 4
@@ -384,20 +387,20 @@ namespace ProcessTracker.Migrations
                         new
                         {
                             Id = 13,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5981),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9987),
                             FieldName = "ReportedDate",
                             FieldType = 3,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Date Reported",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5981),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9987),
                             ProcessDefinitionId = 2,
                             SortOrder = 5
                         },
                         new
                         {
                             Id = 14,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5987),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9994),
                             FieldName = "AffectedUsers",
                             FieldType = 1,
                             IsActive = true,
@@ -405,33 +408,33 @@ namespace ProcessTracker.Migrations
                             Label = "Number of Affected Users",
                             Max = 10000m,
                             Min = 0m,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5988),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9994),
                             ProcessDefinitionId = 2,
                             SortOrder = 6
                         },
                         new
                         {
                             Id = 15,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5989),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9996),
                             FieldName = "ResolutionNotes",
                             FieldType = 5,
                             IsActive = true,
                             IsRequired = false,
                             Label = "Resolution Notes",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(5989),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 862, DateTimeKind.Utc).AddTicks(9996),
                             ProcessDefinitionId = 2,
                             SortOrder = 7
                         },
                         new
                         {
                             Id = 16,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6004),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(12),
                             FieldName = "TestId",
                             FieldType = 0,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Test ID",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6005),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(13),
                             Placeholder = "e.g., UT-2024-001",
                             ProcessDefinitionId = 3,
                             SortOrder = 1
@@ -439,13 +442,13 @@ namespace ProcessTracker.Migrations
                         new
                         {
                             Id = 17,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6006),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(14),
                             FieldName = "ModuleUnderTest",
                             FieldType = 0,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Module Name",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6007),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(15),
                             Placeholder = "e.g., AuthService",
                             ProcessDefinitionId = 3,
                             SortOrder = 2
@@ -453,49 +456,49 @@ namespace ProcessTracker.Migrations
                         new
                         {
                             Id = 18,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6009),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(17),
                             FieldName = "TestCases",
                             FieldType = 1,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Number of Test Cases",
                             Min = 0m,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6009),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(17),
                             ProcessDefinitionId = 3,
                             SortOrder = 3
                         },
                         new
                         {
                             Id = 19,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6011),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(19),
                             FieldName = "PassedCases",
                             FieldType = 1,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Passed Test Cases",
                             Min = 0m,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6011),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(20),
                             ProcessDefinitionId = 3,
                             SortOrder = 4
                         },
                         new
                         {
                             Id = 20,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6013),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(21),
                             FieldName = "FailedCases",
                             FieldType = 1,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Failed Test Cases",
                             Min = 0m,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6014),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(22),
                             ProcessDefinitionId = 3,
                             SortOrder = 5
                         },
                         new
                         {
                             Id = 21,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6016),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(24),
                             FieldName = "CodeCoverage",
                             FieldType = 1,
                             IsActive = true,
@@ -503,20 +506,20 @@ namespace ProcessTracker.Migrations
                             Label = "Code Coverage %",
                             Max = 100m,
                             Min = 0m,
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6016),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(25),
                             ProcessDefinitionId = 3,
                             SortOrder = 6
                         },
                         new
                         {
                             Id = 22,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6018),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(26),
                             FieldName = "TestStatus",
                             FieldType = 4,
                             IsActive = true,
                             IsRequired = true,
                             Label = "Overall Status",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6018),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(27),
                             OptionsJson = "[{\"label\":\"Passed\",\"value\":\"PASSED\"},{\"label\":\"Failed\",\"value\":\"FAILED\"},{\"label\":\"In Progress\",\"value\":\"IN_PROGRESS\"},{\"label\":\"Not Started\",\"value\":\"NOT_STARTED\"}]",
                             ProcessDefinitionId = 3,
                             SortOrder = 7
@@ -524,13 +527,13 @@ namespace ProcessTracker.Migrations
                         new
                         {
                             Id = 23,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6020),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(28),
                             FieldName = "Notes",
                             FieldType = 5,
                             IsActive = true,
                             IsRequired = false,
                             Label = "Test Notes",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6020),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(29),
                             ProcessDefinitionId = 3,
                             SortOrder = 8
                         });
@@ -586,60 +589,13 @@ namespace ProcessTracker.Migrations
                         {
                             Id = 1L,
                             ApplicationId = 1,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6040),
+                            CreatedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(66),
                             FieldValuesJson = "{\"Title\":\"Upgrade HR Portal Database\",\"Description\":\"Database needs to be migrated to the latest version for better performance.\",\"Priority\":\"HIGH\",\"ChangeType\":\"STANDARD\",\"ImplementationDate\":\"2024-12-01\",\"CRNumber\":\"CR-2024-001\"}",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6041),
+                            ModifiedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(66),
                             ProcessDefinitionId = 1,
                             RecordNumber = "CR-2024-001",
                             RecordStatus = "Submitted",
-                            SubmittedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6041)
-                        },
-                        new
-                        {
-                            Id = 101L,
-                            ApplicationId = 2,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6045),
-                            FieldValuesJson = "{\"Title\":\"CRM Login Gateway Down\",\"Description\":\"Customer logins are timing out on the central gateway.\",\"IncidentId\":\"INC-2024-001\",\"Severity\":\"CRITICAL\",\"ReportedDate\":\"2024-09-20T10:00:00Z\",\"AffectedUsers\":\"1500\",\"ResolutionNotes\":\"Rebooted instances\"}",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6046),
-                            ProcessDefinitionId = 2,
-                            RecordNumber = "INC-2024-001",
-                            RecordStatus = "Submitted",
-                            SubmittedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6047)
-                        },
-                        new
-                        {
-                            Id = 102L,
-                            ApplicationId = 2,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6048),
-                            FieldValuesJson = "{\"Title\":\"Payment Gateway Latency\",\"Description\":\"Payments are processing but taking up to 30 seconds.\",\"IncidentId\":\"INC-2024-002\",\"Severity\":\"MAJOR\",\"ReportedDate\":\"2024-09-21T08:30:00Z\",\"AffectedUsers\":\"250\"}",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6049),
-                            ProcessDefinitionId = 2,
-                            RecordNumber = "INC-2024-002",
-                            RecordStatus = "Draft"
-                        },
-                        new
-                        {
-                            Id = 103L,
-                            ApplicationId = 3,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6050),
-                            FieldValuesJson = "{\"TestId\":\"UT-2024-001\",\"ModuleUnderTest\":\"BillingCalculator\",\"TestCases\":\"45\",\"PassedCases\":\"44\",\"FailedCases\":\"1\",\"CodeCoverage\":\"85\",\"TestStatus\":\"FAILED\",\"Notes\":\"Failing isolated edge case on leap year billing calculation.\"}",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6051),
-                            ProcessDefinitionId = 3,
-                            RecordNumber = "UT-2024-001",
-                            RecordStatus = "Submitted",
-                            SubmittedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6051)
-                        },
-                        new
-                        {
-                            Id = 104L,
-                            ApplicationId = 3,
-                            CreatedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6052),
-                            FieldValuesJson = "{\"TestId\":\"UT-2024-002\",\"ModuleUnderTest\":\"AuthTokenService\",\"TestCases\":\"12\",\"PassedCases\":\"12\",\"FailedCases\":\"0\",\"CodeCoverage\":\"100\",\"TestStatus\":\"PASSED\",\"Notes\":\"Fully verified standard configurations.\"}",
-                            ModifiedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6053),
-                            ProcessDefinitionId = 3,
-                            RecordNumber = "UT-2024-002",
-                            RecordStatus = "Submitted",
-                            SubmittedDate = new DateTime(2026, 9, 21, 6, 1, 15, 844, DateTimeKind.Utc).AddTicks(6053)
+                            SubmittedDate = new DateTime(2026, 9, 21, 5, 47, 39, 863, DateTimeKind.Utc).AddTicks(67)
                         });
                 });
 

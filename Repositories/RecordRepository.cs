@@ -13,7 +13,6 @@ namespace ProcessTracker.Repositories
         public async Task<ProcessRecord?> GetRecordWithFieldsAsync(long recordId)
         {
             return await _context.ProcessRecords
-                .Include(pr => pr.FieldValues)
                 .Include(pr => pr.ProcessDefinition)
                 .ThenInclude(pd => pd.Fields)
                 .FirstOrDefaultAsync(pr => pr.Id == recordId);
@@ -32,8 +31,6 @@ namespace ProcessTracker.Repositories
                 query = query.Where(pr => pr.RecordStatus == status);
 
             return await query
-                .Include(pr => pr.FieldValues)
-                .ThenInclude(fv => fv.ProcessField)
                 .OrderByDescending(pr => pr.CreatedDate)
                 .Skip(skip)
                 .Take(pageSize)
@@ -61,8 +58,6 @@ namespace ProcessTracker.Repositories
             int skip = (pageNumber - 1) * pageSize;
 
             var query = _context.ProcessRecords
-                .Include(pr => pr.FieldValues)
-                .ThenInclude(fv => fv.ProcessField)
                 .Where(pr => pr.ProcessDefinitionId == processDefinitionId);
 
             if (applicationId.HasValue)
@@ -134,16 +129,11 @@ namespace ProcessTracker.Repositories
                 if (fieldType == FieldType.Text || fieldType == FieldType.TextArea ||
                     fieldType == FieldType.Email || fieldType == FieldType.Url || fieldType == FieldType.Phone)
                 {
-                    query = query.Where(pr => pr.FieldValues
-                        .Any(fv => fv.ProcessFieldId == fieldId &&
-                                   fv.FieldValue != null &&
-                                   fv.FieldValue.Contains(stringValue)));
+                    query = query.Where(pr => pr.FieldValuesJson.Contains(stringValue));
                 }
                 else if (fieldType == FieldType.Dropdown || fieldType == FieldType.Checkbox)
                 {
-                    query = query.Where(pr => pr.FieldValues
-                        .Any(fv => fv.ProcessFieldId == fieldId &&
-                                   fv.FieldValue == stringValue));
+                    query = query.Where(pr => pr.FieldValuesJson.Contains($"\"{processField.FieldName}\":\"{stringValue}\""));
                 }
             }
 
@@ -166,10 +156,17 @@ namespace ProcessTracker.Repositories
                         DateTime startDate = dateObj.startDate;
                         DateTime endDate = dateObj.endDate;
 
-                        allRecords = allRecords.Where(pr => pr.FieldValues
-                            .Any(fv => fv.ProcessFieldId == processField.Id &&
-                                 DateTime.TryParse(fv.FieldValue, out var parsedDate) &&
-                                 parsedDate >= startDate && parsedDate <= endDate)).ToList();
+                        allRecords = allRecords.Where(pr => 
+                        {
+                            try {
+                                var dict = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(pr.FieldValuesJson);
+                                if (dict != null && dict.TryGetValue(processField.FieldName, out var val))
+                                {
+                                    return DateTime.TryParse(val, out var parsedDate) && parsedDate >= startDate && parsedDate <= endDate;
+                                }
+                            } catch {}
+                            return false;
+                        }).ToList();
                     }
                 }
                 else if (fieldType == FieldType.Number)
@@ -180,10 +177,17 @@ namespace ProcessTracker.Repositories
                         decimal min = numObj.min;
                         decimal max = numObj.max;
 
-                        allRecords = allRecords.Where(pr => pr.FieldValues
-                            .Any(fv => fv.ProcessFieldId == processField.Id &&
-                                 decimal.TryParse(fv.FieldValue, out var parsedNum) &&
-                                 parsedNum >= min && parsedNum <= max)).ToList();
+                        allRecords = allRecords.Where(pr => 
+                        {
+                            try {
+                                var dict = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(pr.FieldValuesJson);
+                                if (dict != null && dict.TryGetValue(processField.FieldName, out var val))
+                                {
+                                    return decimal.TryParse(val, out var parsedNum) && parsedNum >= min && parsedNum <= max;
+                                }
+                            } catch {}
+                            return false;
+                        }).ToList();
                     }
                 }
             }

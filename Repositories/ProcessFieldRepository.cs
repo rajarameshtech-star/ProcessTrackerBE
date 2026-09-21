@@ -30,8 +30,11 @@ namespace ProcessTracker.Repositories
 
         public async Task<bool> HasRecordsAssociatedAsync(int fieldId)
         {
-            return await _context.ProcessRecordFieldValues
-                .AnyAsync(fv => fv.ProcessFieldId == fieldId);
+            var processField = await GetByIdAsync(fieldId);
+            if (processField == null) return false;
+
+            return await _context.ProcessRecords
+                .AnyAsync(r => r.FieldValuesJson.Contains($"\"{processField.FieldName}\":"));
         }
     }
 }

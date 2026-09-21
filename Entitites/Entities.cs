@@ -73,7 +73,6 @@ namespace ProcessTracker.Entities
 
         // Navigation
         public ProcessDefinition? ProcessDefinition { get; set; }
-        public ICollection<ProcessRecordFieldValue> FieldValues { get; set; } = new List<ProcessRecordFieldValue>();
     }
 
     // ProcessRecord entity - represents a submitted form instance
@@ -88,41 +87,11 @@ namespace ProcessTracker.Entities
         public DateTime ModifiedDate { get; set; }
         public DateTime? SubmittedDate { get; set; }
         public string? Notes { get; set; }
+        
+        public string FieldValuesJson { get; set; } = "{}";
 
         // Navigation
         public Application? Application { get; set; }
         public ProcessDefinition? ProcessDefinition { get; set; }
-        public ICollection<ProcessRecordFieldValue> FieldValues { get; set; } = new List<ProcessRecordFieldValue>();
-    }
-
-    // ProcessRecordFieldValue entity - stores actual field values submitted by users
-    public class ProcessRecordFieldValue
-    {
-        public long Id { get; set; }
-        public long ProcessRecordId { get; set; }
-        public int ProcessFieldId { get; set; }
-        public string? FieldValue { get; set; }  // Stored as string
-        public DateTime CreatedDate { get; set; }
-        public DateTime ModifiedDate { get; set; }
-
-        // Navigation
-        public ProcessRecord? ProcessRecord { get; set; }
-        public ProcessField? ProcessField { get; set; }
-
-        // Helper method to convert string value to typed value
-        public object? GetTypedValue()
-        {
-            if (string.IsNullOrEmpty(FieldValue) || ProcessField == null)
-                return null;
-
-            return ProcessField.FieldType switch
-            {
-                FieldType.Number => decimal.TryParse(FieldValue, out var num) ? num : null,
-                FieldType.Date => DateTime.TryParse(FieldValue, out var date) ? date : null,
-                FieldType.DateTime => DateTime.TryParse(FieldValue, out var dt) ? dt : null,
-                FieldType.Checkbox => bool.TryParse(FieldValue, out var b) ? b : null,
-                _ => FieldValue
-            };
-        }
     }
 }

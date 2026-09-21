@@ -14,7 +14,6 @@ namespace ProcessTracker.Data
         public DbSet<ProcessDefinition> ProcessDefinitions { get; set; }
         public DbSet<ProcessField> ProcessFields { get; set; }
         public DbSet<ProcessRecord> ProcessRecords { get; set; }
-        public DbSet<ProcessRecordFieldValue> ProcessRecordFieldValues { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,29 +39,12 @@ namespace ProcessTracker.Data
                 .HasForeignKey(pr => pr.ProcessDefinitionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // ProcessField
-            modelBuilder.Entity<ProcessField>()
-                .HasMany(pf => pf.FieldValues)
-                .WithOne(pfv => pfv.ProcessField)
-                .HasForeignKey(pfv => pfv.ProcessFieldId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // ProcessRecord
-            modelBuilder.Entity<ProcessRecord>()
-                .HasMany(pr => pr.FieldValues)
-                .WithOne(pfv => pfv.ProcessRecord)
-                .HasForeignKey(pfv => pfv.ProcessRecordId)
+            // ProcessDefinition
+            modelBuilder.Entity<ProcessDefinition>()
+                .HasMany(pd => pd.Records)
+                .WithOne(pr => pr.ProcessDefinition)
+                .HasForeignKey(pr => pr.ProcessDefinitionId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            // ProcessRecordFieldValue Indexes for Search Performance
-            modelBuilder.Entity<ProcessRecordFieldValue>()
-                .HasIndex(pfv => pfv.ProcessFieldId)
-                .HasDatabaseName("IX_ProcessRecordFieldValues_ProcessFieldId_Include_FieldValue")
-                .IncludeProperties(pfv => pfv.FieldValue);
-
-            modelBuilder.Entity<ProcessRecordFieldValue>()
-                .HasIndex(pfv => new { pfv.ProcessRecordId, pfv.ProcessFieldId })
-                .HasDatabaseName("IX_ProcessRecordFieldValues_Record_Field");
 
             // Seed data
             SeedData(modelBuilder);
@@ -121,17 +103,35 @@ namespace ProcessTracker.Data
 
             // ProcessRecords
             modelBuilder.Entity<ProcessRecord>().HasData(
-                new ProcessRecord { Id = 1L, ApplicationId = 1, ProcessDefinitionId = 1, RecordStatus = "Submitted", RecordNumber = "CR-2024-001", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, SubmittedDate = DateTime.UtcNow }
-            );
-
-            // ProcessRecordFieldValues
-            modelBuilder.Entity<ProcessRecordFieldValue>().HasData(
-                new ProcessRecordFieldValue { Id = 1L, ProcessRecordId = 1L, ProcessFieldId = 1, FieldValue = "Upgrade HR Portal Database", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
-                new ProcessRecordFieldValue { Id = 2L, ProcessRecordId = 1L, ProcessFieldId = 2, FieldValue = "Database needs to be migrated to the latest version for better performance.", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
-                new ProcessRecordFieldValue { Id = 3L, ProcessRecordId = 1L, ProcessFieldId = 3, FieldValue = "HIGH", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
-                new ProcessRecordFieldValue { Id = 4L, ProcessRecordId = 1L, ProcessFieldId = 4, FieldValue = "STANDARD", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
-                new ProcessRecordFieldValue { Id = 5L, ProcessRecordId = 1L, ProcessFieldId = 6, FieldValue = "2024-12-01", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow },
-                new ProcessRecordFieldValue { Id = 6L, ProcessRecordId = 1L, ProcessFieldId = 8, FieldValue = "CR-2024-001", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow }
+                new ProcessRecord { 
+                    Id = 1L, ApplicationId = 1, ProcessDefinitionId = 1, RecordStatus = "Submitted", 
+                    RecordNumber = "CR-2024-001", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, 
+                    SubmittedDate = DateTime.UtcNow,
+                    FieldValuesJson = "{\"Title\":\"Upgrade HR Portal Database\",\"Description\":\"Database needs to be migrated to the latest version for better performance.\",\"Priority\":\"HIGH\",\"ChangeType\":\"STANDARD\",\"ImplementationDate\":\"2024-12-01\",\"CRNumber\":\"CR-2024-001\"}"
+                },
+                new ProcessRecord { 
+                    Id = 101L, ApplicationId = 2, ProcessDefinitionId = 2, RecordStatus = "Submitted", 
+                    RecordNumber = "INC-2024-001", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, 
+                    SubmittedDate = DateTime.UtcNow,
+                    FieldValuesJson = "{\"Title\":\"CRM Login Gateway Down\",\"Description\":\"Customer logins are timing out on the central gateway.\",\"IncidentId\":\"INC-2024-001\",\"Severity\":\"CRITICAL\",\"ReportedDate\":\"2024-09-20T10:00:00Z\",\"AffectedUsers\":\"1500\",\"ResolutionNotes\":\"Rebooted instances\"}"
+                },
+                new ProcessRecord { 
+                    Id = 102L, ApplicationId = 2, ProcessDefinitionId = 2, RecordStatus = "Draft", 
+                    RecordNumber = "INC-2024-002", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, 
+                    FieldValuesJson = "{\"Title\":\"Payment Gateway Latency\",\"Description\":\"Payments are processing but taking up to 30 seconds.\",\"IncidentId\":\"INC-2024-002\",\"Severity\":\"MAJOR\",\"ReportedDate\":\"2024-09-21T08:30:00Z\",\"AffectedUsers\":\"250\"}"
+                },
+                new ProcessRecord { 
+                    Id = 103L, ApplicationId = 3, ProcessDefinitionId = 3, RecordStatus = "Submitted", 
+                    RecordNumber = "UT-2024-001", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, 
+                    SubmittedDate = DateTime.UtcNow,
+                    FieldValuesJson = "{\"TestId\":\"UT-2024-001\",\"ModuleUnderTest\":\"BillingCalculator\",\"TestCases\":\"45\",\"PassedCases\":\"44\",\"FailedCases\":\"1\",\"CodeCoverage\":\"85\",\"TestStatus\":\"FAILED\",\"Notes\":\"Failing isolated edge case on leap year billing calculation.\"}"
+                },
+                new ProcessRecord { 
+                    Id = 104L, ApplicationId = 3, ProcessDefinitionId = 3, RecordStatus = "Submitted", 
+                    RecordNumber = "UT-2024-002", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, 
+                    SubmittedDate = DateTime.UtcNow,
+                    FieldValuesJson = "{\"TestId\":\"UT-2024-002\",\"ModuleUnderTest\":\"AuthTokenService\",\"TestCases\":\"12\",\"PassedCases\":\"12\",\"FailedCases\":\"0\",\"CodeCoverage\":\"100\",\"TestStatus\":\"PASSED\",\"Notes\":\"Fully verified standard configurations.\"}"
+                }
             );
         }
     }
