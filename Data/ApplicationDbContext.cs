@@ -106,36 +106,62 @@ namespace ProcessTracker.Data
                 new ProcessField { Id = 23, ProcessDefinitionId = 3, FieldName = "Notes", Label = "Test Notes", FieldType = FieldType.TextArea, IsRequired = false, SortOrder = 8, IsActive = true, CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow }
             );
 
-            // ProcessRecords
+            // ProcessRecords (Rich Exhaustive Seed Block)
+            var baseTime = DateTime.UtcNow;
+
             modelBuilder.Entity<ProcessRecord>().HasData(
                 new ProcessRecord { 
                     Id = 1L, ApplicationId = 1, ProcessDefinitionId = 1, RecordStatus = "Submitted", 
-                    RecordNumber = "CR-2024-001", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, 
-                    SubmittedDate = DateTime.UtcNow,
-                    FieldValuesJson = "{\"Title\":\"Upgrade HR Portal Database\",\"Description\":\"Database needs to be migrated to the latest version for better performance.\",\"Priority\":\"HIGH\",\"ChangeType\":\"STANDARD\",\"ImplementationDate\":\"2024-12-01\",\"CRNumber\":\"CR-2024-001\"}"
+                    RecordNumber = "CR-2024-001", CreatedDate = baseTime.AddDays(-15), ModifiedDate = baseTime.AddDays(-10), 
+                    SubmittedDate = baseTime.AddDays(-10),
+                    Priority = PriorityLevel.HIGH, ExpectedDueDate = baseTime.AddDays(-5), AssignedTo = "john.doe@company.com",
+                    FieldValuesJson = "{\"Title\":\"Upgrade HR Portal Database\",\"Description\":\"Database needs to be migrated to the latest version for better performance.\",\"ChangeType\":\"STANDARD\",\"CRNumber\":\"CR-2024-001\"}"
                 },
                 new ProcessRecord { 
-                    Id = 101L, ApplicationId = 2, ProcessDefinitionId = 2, RecordStatus = "Submitted", 
-                    RecordNumber = "INC-2024-001", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, 
-                    SubmittedDate = DateTime.UtcNow,
-                    FieldValuesJson = "{\"Title\":\"CRM Login Gateway Down\",\"Description\":\"Customer logins are timing out on the central gateway.\",\"IncidentId\":\"INC-2024-001\",\"Severity\":\"CRITICAL\",\"ReportedDate\":\"2024-09-20T10:00:00Z\",\"AffectedUsers\":\"1500\",\"ResolutionNotes\":\"Rebooted instances\"}"
+                    Id = 501L, ApplicationId = 2, ProcessDefinitionId = 2, RecordStatus = "Submitted", 
+                    RecordNumber = "INC-2024-001", CreatedDate = baseTime.AddDays(-2), ModifiedDate = baseTime.AddDays(-1), 
+                    SubmittedDate = baseTime.AddDays(-1),
+                    Priority = PriorityLevel.CRITICAL, ExpectedDueDate = baseTime.AddDays(-1), AssignedTo = "jenna.devops@company.com",
+                    FieldValuesJson = "{\"Title\":\"CRM Login Gateway Down\",\"Description\":\"Customer logins are timing out on the central gateway.\",\"IncidentId\":\"INC-2024-001\",\"Severity\":\"CRITICAL\",\"AffectedUsers\":\"1500\",\"ResolutionNotes\":\"Rebooted instances\"}"
                 },
                 new ProcessRecord { 
-                    Id = 102L, ApplicationId = 2, ProcessDefinitionId = 2, RecordStatus = "Draft", 
-                    RecordNumber = "INC-2024-002", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, 
-                    FieldValuesJson = "{\"Title\":\"Payment Gateway Latency\",\"Description\":\"Payments are processing but taking up to 30 seconds.\",\"IncidentId\":\"INC-2024-002\",\"Severity\":\"MAJOR\",\"ReportedDate\":\"2024-09-21T08:30:00Z\",\"AffectedUsers\":\"250\"}"
+                    Id = 502L, ApplicationId = 2, ProcessDefinitionId = 2, RecordStatus = "Draft", 
+                    RecordNumber = "INC-2024-002", CreatedDate = baseTime.AddHours(-10), ModifiedDate = baseTime.AddHours(-2), 
+                    Priority = PriorityLevel.BLOCKER, ExpectedDueDate = baseTime.AddHours(2), AssignedTo = null,
+                    FieldValuesJson = "{\"Title\":\"Payment Gateway Latency\",\"Description\":\"Payments are processing but taking up to 30 seconds.\",\"IncidentId\":\"INC-2024-002\",\"Severity\":\"MAJOR\",\"AffectedUsers\":\"250\"}"
                 },
                 new ProcessRecord { 
-                    Id = 103L, ApplicationId = 3, ProcessDefinitionId = 3, RecordStatus = "Submitted", 
-                    RecordNumber = "UT-2024-001", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, 
-                    SubmittedDate = DateTime.UtcNow,
-                    FieldValuesJson = "{\"TestId\":\"UT-2024-001\",\"ModuleUnderTest\":\"BillingCalculator\",\"TestCases\":\"45\",\"PassedCases\":\"44\",\"FailedCases\":\"1\",\"CodeCoverage\":\"85\",\"TestStatus\":\"FAILED\",\"Notes\":\"Failing isolated edge case on leap year billing calculation.\"}"
+                    Id = 503L, ApplicationId = 3, ProcessDefinitionId = 3, RecordStatus = "Submitted", 
+                    RecordNumber = "UT-2024-001", CreatedDate = baseTime.AddDays(-1), ModifiedDate = baseTime, 
+                    SubmittedDate = baseTime,
+                    Priority = PriorityLevel.LOW, ExpectedDueDate = baseTime.AddDays(4), AssignedTo = "mark.qa@company.com",
+                    FieldValuesJson = "{\"TestId\":\"UT-2024-001\",\"ModuleUnderTest\":\"BillingCalculator\",\"TestCases\":\"45\",\"PassedCases\":\"44\",\"FailedCases\":\"1\",\"CodeCoverage\":\"85\",\"TestStatus\":\"FAILED\"}"
                 },
                 new ProcessRecord { 
-                    Id = 104L, ApplicationId = 3, ProcessDefinitionId = 3, RecordStatus = "Submitted", 
-                    RecordNumber = "UT-2024-002", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow, 
-                    SubmittedDate = DateTime.UtcNow,
-                    FieldValuesJson = "{\"TestId\":\"UT-2024-002\",\"ModuleUnderTest\":\"AuthTokenService\",\"TestCases\":\"12\",\"PassedCases\":\"12\",\"FailedCases\":\"0\",\"CodeCoverage\":\"100\",\"TestStatus\":\"PASSED\",\"Notes\":\"Fully verified standard configurations.\"}"
+                    Id = 504L, ApplicationId = 3, ProcessDefinitionId = 3, RecordStatus = "Submitted", 
+                    RecordNumber = "UT-2024-002", CreatedDate = baseTime.AddDays(-3), ModifiedDate = baseTime.AddDays(-1), 
+                    SubmittedDate = baseTime.AddDays(-1),
+                    Priority = PriorityLevel.MEDIUM, ExpectedDueDate = baseTime.AddHours(5), AssignedTo = "jenna.devops@company.com",
+                    FieldValuesJson = "{\"TestId\":\"UT-2024-002\",\"ModuleUnderTest\":\"AuthTokenService\",\"TestCases\":\"12\",\"PassedCases\":\"12\",\"FailedCases\":\"0\",\"CodeCoverage\":\"100\",\"TestStatus\":\"PASSED\"}"
+                },
+                new ProcessRecord { 
+                    Id = 505L, ApplicationId = 1, ProcessDefinitionId = 1, RecordStatus = "Draft", 
+                    RecordNumber = "CR-2024-002", CreatedDate = baseTime.AddDays(-1), ModifiedDate = baseTime.AddHours(-5), 
+                    Priority = PriorityLevel.MEDIUM, ExpectedDueDate = baseTime.AddDays(-1), AssignedTo = null,
+                    FieldValuesJson = "{\"Title\":\"Fix CSS Dropdown Glitch\",\"Description\":\"The dropdowns are hanging off the screen.\",\"ChangeType\":\"MINOR\",\"CRNumber\":\"CR-2024-002\"}"
+                },
+                new ProcessRecord { 
+                    Id = 506L, ApplicationId = 2, ProcessDefinitionId = 2, RecordStatus = "Draft", 
+                    RecordNumber = "INC-2024-003", CreatedDate = baseTime.AddHours(-1), ModifiedDate = baseTime, 
+                    Priority = PriorityLevel.HIGH, ExpectedDueDate = baseTime.AddHours(12), AssignedTo = "alex@ops.com",
+                    FieldValuesJson = "{\"Title\":\"High CPU on Redis API\",\"Description\":\"Nodes are spinning at 99% usage.\",\"IncidentId\":\"INC-2024-003\",\"Severity\":\"MAJOR\",\"AffectedUsers\":\"40\"}"
+                },
+                new ProcessRecord { 
+                    Id = 507L, ApplicationId = 1, ProcessDefinitionId = 1, RecordStatus = "Submitted", 
+                    RecordNumber = "CR-2024-003", CreatedDate = baseTime.AddDays(-5), ModifiedDate = baseTime.AddDays(-4), 
+                    SubmittedDate = baseTime.AddDays(-4),
+                    Priority = PriorityLevel.CRITICAL, ExpectedDueDate = baseTime.AddDays(2), AssignedTo = "alex@ops.com",
+                    FieldValuesJson = "{\"Title\":\"Migrate Payment Gateway\",\"Description\":\"Shift entirely away from legacy API endpoints.\",\"ChangeType\":\"EMERGENCY\",\"CRNumber\":\"CR-2024-003\"}"
                 }
             );
         }
