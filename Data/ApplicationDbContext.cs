@@ -46,6 +46,11 @@ namespace ProcessTracker.Data
                 .HasForeignKey(pr => pr.ProcessDefinitionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Enum Conversions for ProcessRecord
+            modelBuilder.Entity<ProcessRecord>()
+                .Property(pr => pr.Priority)
+                .HasConversion<string>();
+
             // Seed data
             SeedData(modelBuilder);
         }

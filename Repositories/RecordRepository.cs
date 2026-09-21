@@ -13,6 +13,7 @@ namespace ProcessTracker.Repositories
         public async Task<ProcessRecord?> GetRecordWithFieldsAsync(long recordId)
         {
             return await _context.ProcessRecords
+                .Include(pr => pr.Application)
                 .Include(pr => pr.ProcessDefinition)
                 .ThenInclude(pd => pd.Fields)
                 .FirstOrDefaultAsync(pr => pr.Id == recordId);
@@ -25,6 +26,7 @@ namespace ProcessTracker.Repositories
             int skip = (pageNumber - 1) * pageSize;
 
             var query = _context.ProcessRecords
+                .Include(pr => pr.Application)
                 .Where(pr => pr.ProcessDefinitionId == processDefinitionId);
 
             if (!string.IsNullOrEmpty(status))
@@ -58,10 +60,20 @@ namespace ProcessTracker.Repositories
             int skip = (pageNumber - 1) * pageSize;
 
             var query = _context.ProcessRecords
+                .Include(pr => pr.Application)
                 .Where(pr => pr.ProcessDefinitionId == processDefinitionId);
 
             if (applicationId.HasValue)
                 query = query.Where(pr => pr.ApplicationId == applicationId.Value);
+
+            if (filters == null || filters.Count == 0)
+            {
+                return await query
+                    .OrderByDescending(pr => pr.CreatedDate)
+                    .Skip(skip)
+                    .Take(pageSize)
+                    .ToListAsync();
+            }
 
             // Get all process fields for type checking
             var processFields = await _context.ProcessFields
@@ -77,6 +89,38 @@ namespace ProcessTracker.Repositories
                 var filterValue = filter.Value;
 
                 var processField = processFields.FirstOrDefault(pf => pf.FieldName == fieldName);
+                
+                // Intercept Hybrid system fields for explicit execution natively bypassing JSON schema entirely
+                if (fieldName.Equals("Priority", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (Enum.TryParse<PriorityLevel>(filterValue?.ToString(), true, out var prio))
+                        query = query.Where(pr => pr.Priority == prio);
+                    continue; // Skip moving to parsedFilters json block
+                }
+                if (fieldName.Equals("ExpectedDueDate", StringComparison.OrdinalIgnoreCase))
+                {
+                    var dateRange = ConvertToDictionary(filterValue);
+                    if (dateRange != null && DateTime.TryParse(dateRange["startDate"]?.ToString(), out var s) && DateTime.TryParse(dateRange["endDate"]?.ToString(), out var e))
+                        query = query.Where(pr => pr.ExpectedDueDate >= s && pr.ExpectedDueDate <= e);
+                    continue; 
+                }
+                if (fieldName.Equals("AssignedTo", StringComparison.OrdinalIgnoreCase))
+                {
+                    var val = filterValue?.ToString();
+                    if (!string.IsNullOrEmpty(val))
+                        query = query.Where(pr => pr.AssignedTo != null && pr.AssignedTo.Contains(val));
+                    continue;
+                }
+                if (fieldName.Equals("RecordStatus", StringComparison.OrdinalIgnoreCase))
+                {
+                    var status = filterValue?.ToString();
+                    if (!string.IsNullOrEmpty(status))
+                    {
+                        query = query.Where(pr => pr.RecordStatus == status);
+                    }
+                    continue;
+                }
+
                 if (processField == null)
                     continue;
 

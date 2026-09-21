@@ -46,12 +46,20 @@ namespace ProcessTracker.Services
             if (errors.Count > 0)
                 throw new ValidationException(errors);
 
+            // Process Native Hybrid System Fields
+            PriorityLevel? priority = null;
+            if (Enum.TryParse<PriorityLevel>(request.Priority, true, out var parsedPriority))
+                priority = parsedPriority;
+
             var record = new ProcessRecord
             {
                 ApplicationId = applicationId,
                 ProcessDefinitionId = processDefinitionId,
                 RecordStatus = "Draft",
                 RecordNumber = GenerateRecordNumber(),
+                Priority = priority,
+                ExpectedDueDate = request.ExpectedDueDate,
+                AssignedTo = request.AssignedTo,
                 FieldValuesJson = System.Text.Json.JsonSerializer.Serialize(request.FieldValues),
                 CreatedDate = DateTime.UtcNow,
                 ModifiedDate = DateTime.UtcNow
@@ -92,6 +100,14 @@ namespace ProcessTracker.Services
                 record.Notes = request.Notes;
 
             _recordRepository.Update(record);
+
+            if (Enum.TryParse<PriorityLevel>(request.Priority, true, out var parsedPriority))
+                record.Priority = parsedPriority;
+            else if (request.Priority == null)
+                record.Priority = null;
+
+            record.ExpectedDueDate = request.ExpectedDueDate;
+            record.AssignedTo = request.AssignedTo;
 
             var existingFieldValues = ParseFieldValues(record.FieldValuesJson);
 
@@ -175,10 +191,21 @@ namespace ProcessTracker.Services
 
         private RecordResponse MapToResponse(ProcessRecord record, Dictionary<string, string?> fieldValues)
         {
+            // Re-inject hybrid system fields seamlessly so the generic frontend UI rendering doesn't crash
+            if (record.Priority != null)
+                fieldValues["Priority"] = record.Priority.ToString();
+            
+            if (record.ExpectedDueDate.HasValue)
+                fieldValues["ExpectedDueDate"] = record.ExpectedDueDate.Value.ToString("o");
+                
+            if (!string.IsNullOrEmpty(record.AssignedTo))
+                fieldValues["AssignedTo"] = record.AssignedTo;
+
             return new RecordResponse
             {
                 Id = record.Id,
                 ApplicationId = record.ApplicationId,
+                ApplicationName = record.Application?.Title,
                 ProcessDefinitionId = record.ProcessDefinitionId,
                 RecordStatus = record.RecordStatus,
                 RecordNumber = record.RecordNumber,
@@ -186,6 +213,9 @@ namespace ProcessTracker.Services
                 ModifiedDate = record.ModifiedDate,
                 SubmittedDate = record.SubmittedDate,
                 Notes = record.Notes,
+                Priority = record.Priority?.ToString(),
+                ExpectedDueDate = record.ExpectedDueDate,
+                AssignedTo = record.AssignedTo,
                 FieldValues = fieldValues
             };
         }
@@ -224,6 +254,9 @@ namespace ProcessTracker.Services
         // Services/RecordService.cs - ADD THIS METHOD
         public async Task<PaginatedResponse<RecordResponse>> GetRecordsByProcessWithFiltersAsync(int processDefinitionId, int? applicationId, Dictionary<string, object> filters, int pageNumber, int pageSize)
         {
+            // Null safety block handling
+            filters = filters ?? new Dictionary<string, object>();
+
             var records = await _recordRepository.GetRecordsByProcessDefinitionWithFiltersAsync(processDefinitionId, applicationId, filters, pageNumber, pageSize);
             var totalCount = await _recordRepository.GetTotalRecordsCountAsync(processDefinitionId, applicationId, null);
 

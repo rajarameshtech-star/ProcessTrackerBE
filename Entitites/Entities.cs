@@ -1,8 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ProcessTracker.Entities
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum PriorityLevel
+    {
+        LOW,
+        MEDIUM,
+        HIGH,
+        CRITICAL,
+        BLOCKER
+    }
+
     // Enum for field types
     public enum FieldType
     {
@@ -88,6 +99,11 @@ namespace ProcessTracker.Entities
         public DateTime? SubmittedDate { get; set; }
         public string? Notes { get; set; }
         
+        // Hybrid System Fields
+        public PriorityLevel? Priority { get; set; }
+        public DateTime? ExpectedDueDate { get; set; }
+        public string? AssignedTo { get; set; }
+
         public string FieldValuesJson { get; set; } = "{}";
 
         // Navigation

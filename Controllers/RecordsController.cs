@@ -193,6 +193,23 @@ namespace ProcessTracker.Controllers
             if (request.PageSize < 1 || request.PageSize > 100)
                 return BadRequest(new { message = "PageSize must be between 1 and 100" });
 
+            if (!string.IsNullOrEmpty(request.Priority))
+                request.Filters["Priority"] = request.Priority;
+
+            if (!string.IsNullOrEmpty(request.RecordStatus))
+                request.Filters["RecordStatus"] = request.RecordStatus;
+
+            if (!string.IsNullOrEmpty(request.AssignedTo))
+                request.Filters["AssignedTo"] = request.AssignedTo;
+
+            if (request.ExpectedDueDateStart.HasValue || request.ExpectedDueDateEnd.HasValue)
+            {
+                var dates = new Dictionary<string, string>();
+                if (request.ExpectedDueDateStart.HasValue) dates["startDate"] = request.ExpectedDueDateStart.Value.ToString("o");
+                if (request.ExpectedDueDateEnd.HasValue) dates["endDate"] = request.ExpectedDueDateEnd.Value.ToString("o");
+                request.Filters["ExpectedDueDate"] = dates;
+            }
+
             var response = await _recordService.GetRecordsByProcessWithFiltersAsync(
                 processDefinitionId,
                 applicationId,
@@ -201,6 +218,18 @@ namespace ProcessTracker.Controllers
                 request.PageSize);
 
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Get available priority options
+        /// </summary>
+        /// <returns>List of Priority strings</returns>
+        [HttpGet("priorities")]
+        [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
+        public ActionResult<List<string>> GetPriorities()
+        {
+            var priorities = Enum.GetNames(typeof(ProcessTracker.Entities.PriorityLevel)).ToList();
+            return Ok(priorities);
         }
     }
 }
